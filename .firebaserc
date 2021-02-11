@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "piscinet-79e4a"
+  },
+  "targets": {
+    "piscinet-79e4a": {
+      "hosting": {
+        "piscinet": [
+          "piscinet-79e4a"
+        ]
+      }
+    }
+  }
+}

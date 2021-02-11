@@ -1,0 +1,7 @@
+{
+  "name": "piscinet",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
