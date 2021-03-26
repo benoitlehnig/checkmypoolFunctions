@@ -39,6 +39,7 @@ export {addAccount} from './account/account'
 export {updateAccount} from './account/account'
 export {deleteAccount} from './account/account'
 export {newAccountRequest} from './account/account'
+export {createSelfAccount} from './account/account'
 
 //message
 export {addMessage} from './message/message'
