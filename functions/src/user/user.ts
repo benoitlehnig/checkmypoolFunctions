@@ -20,7 +20,7 @@ export const sendUserCreationEmail = functions.https.onCall((data:any, context:a
 		length: 6,
 		numbers: true
 	});
-	const link= "https://piscinet-79e4a.web.app/login";
+	const link= "https://checkmypool.net/login";
 	const accountId = context.auth.token.accountId;
 	console.log("accountId : ", accountId);
 

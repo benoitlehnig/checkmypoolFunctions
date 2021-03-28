@@ -58,9 +58,16 @@ function activateAccount(accountId:any,data:any){
 			console.log("setAdmin true");
 			return reference
 		});
-		return firebaseDB.ref(accountId+'/employees').child(userRecord.uid).set(data).then((reference:any) => {
+		await firebaseDB.ref(accountId+'/employees').child(userRecord.uid).set(data).then((reference:any) => {
 			return { key: userRecord.uid, employee: data};
-		})
+		});
+		let emailData = {
+			link:'https://checkmypool.net/login?accountId='+accountId,
+			password: password,
+			emailAddress: data.email
+
+		}
+		sendEmailSuccessfulAccountCreation(emailData)
 	})
 	.catch( function(error:any) {
 		console.log('Error fetching user data:', error);
@@ -69,6 +76,41 @@ function activateAccount(accountId:any,data:any){
 	});
 }
 
+
+export const subscribeAllNewVisits = functions.https.onCall((data:any, context:any) => {
+	return firebaseDB.ref(context.auth.token.accountId+'/employees/'+data.uid+'/pushNotifAllVisitSubscription').set(data.status).then(function(snapshot:any) {
+		return snapshot
+	})
+
+});
+
+
+function sendEmailSuccessfulAccountCreation(data:any) {
+	console.log("sendEmailSuccessfulAccountCreation, ", data); 
+	const msg={
+		"personalizations": [
+		{
+			"to": [
+			{
+				"email":"contact@checkmypool.net",
+				"name":"checkmypool"
+			}
+			],
+			"dynamic_template_data": {
+				"link": data.link,
+				"email": data.email,
+				"password": data.password,
+			},
+			"subject": "New Request ! "
+		}
+		],
+		"from": "contact@checkmypool.net",
+		"reply_to": "contact@checkmypool.net",
+		"template_id": "d-e9a43e3a62034e63bb108f836aa8b95b"
+	}
+	sgMail.send(msg);	
+	return null
+}
 
 
 export const newAccountRequest = functions.https.onCall((data:any, context:any) => {
