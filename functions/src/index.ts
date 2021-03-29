@@ -23,6 +23,11 @@ export {addSwimmingPool} from './pool/pool'
 export {updateSwimmingPool} from './pool/pool'
 export {newSwimmingPoolEvent} from './pool/pool'
 export {deleteSwimmingPoolEvent} from './pool/pool'
+export {addPicture} from './pool/pool'
+export {deletePicture} from './pool/pool'
+export {deletePictureEvent} from './pool/pool'
+
+
 
 //Visits
 export {newVisitEvent} from './visit/visit'
