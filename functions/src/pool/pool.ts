@@ -48,19 +48,56 @@ export const addPicture = functions.https.onCall((data:any, context:any) => {
 	console.log("addPicture>>", JSON.stringify(data));
 	return firebaseDB.ref(context.auth.token.accountId+'/pools/'+data.poolId+'/pictures/'+data.picture.filepath).set(data.picture);
 });
+
+
 export const deletePicture = functions.https.onCall((data:any, context:any) => {
 	console.log("deletePicture>>", JSON.stringify(data));
 	return firebaseDB.ref(context.auth.token.accountId+'/pools/'+data.poolId+'/pictures/'+data.pictureId).remove()
 });
+
+export const newPictureUploadEvent = functions.storage.object().onFinalize(async (object) => {
+	const filePath = object.name; // File path in the bucket.
+	const mediaLink = object.mediaLink; // Number of times metadata has been generated. New objects have a value of 1.
+	const selfLink = object.selfLink; // Number of times metadata has been generated. New objects have a value of 1.
+	console.log("filePath",filePath,"mediaLink",mediaLink, "selfLink",selfLink);
+	if(filePath!==undefined){
+		if(filePath.indexOf("_200x200" ) !==-1){
+		const bucket = firebaseStorage.bucket();
+		const file = bucket.file(filePath);
+		return file.getSignedUrl({
+			action: 'read',
+			expires: '03-09-2491'
+		}).then(signedUrls => {
+			// signedUrls[0] contains the file's public URL
+			console.log("signedUrls",signedUrls)
+			const accountId=filePath.split("/")[0];
+		const poolId=filePath.split("/")[2];
+		const pictureId=filePath.split("/")[4];
+		const picture = {
+			name:"",
+			type:"",
+			url:signedUrls[0] ,
+			dateTime:object.timeCreated,
+			filepath:pictureId
+		}
+
+		return firebaseDB.ref(accountId+'/pools/'+poolId+'/pictures/'+pictureId).set(picture);
+		});
+	}
+	}
+
+});
 export const deletePictureEvent = functions.database.ref('{accountId}/pools/{poolId}/pictures/{pictureId}').onDelete((data:any, context:any) => {
-	console.log("onDeletePicture>>", JSON.stringify(data));
+	//	console.log("onDeletePicture>>", JSON.stringify(data));
 	const accountId=  context.params.accountId;
 	const poolId=  context.params.poolId;
 	const pictureId=  context.params.pictureId;
+	const filepath = accountId+'/pools/'+poolId+'/pictures/'+pictureId;
+	console.log("deletePictureEvent",accountId,poolId,pictureId,accountId+'/pools/'+poolId+'/pictures/'+pictureId )
+	const bucket = firebaseStorage.bucket();
+	return bucket.file(filepath).delete()
 
-    const bucket = firebaseStorage.bucket(accountId+'/pools/'+poolId+'/pictures/');
-	return bucket.deleteFiles({
-      prefix: pictureId
-    });
+
 });
+
 

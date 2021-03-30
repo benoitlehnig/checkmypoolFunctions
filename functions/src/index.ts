@@ -26,6 +26,7 @@ export {deleteSwimmingPoolEvent} from './pool/pool'
 export {addPicture} from './pool/pool'
 export {deletePicture} from './pool/pool'
 export {deletePictureEvent} from './pool/pool'
+export {newPictureUploadEvent} from './pool/pool'
 
 
 
